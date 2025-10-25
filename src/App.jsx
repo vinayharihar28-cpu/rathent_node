@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useReducer, useMemo } from 'react';
 // 🚨 FIX: Removed imports for unresolvable packages. 
 // We will now rely on global Google objects loaded via <script>.
-// import { GoogleLogin } from '@react-oauth/google';
-// import { jwtDecode } from 'jwt-decode';
 
 // --- Global Script Injection for Tailwind CSS ---
-// This ensures Tailwind is loaded synchronously before the first component renders,
-// fixing the initial styling issue.
+// Ensures Tailwind is loaded synchronously.
 (() => {
     if (typeof window !== 'undefined' && !document.getElementById('tailwind-script')) {
         const script = document.createElement('script');
@@ -16,6 +13,20 @@ import React, { useState, useEffect, useReducer, useMemo } from 'react';
     }
 })();
 // --------------------------------------------------
+
+// --- Global Script Injection for Google Identity Services ---
+// Ensures the Google 'gsi/client' library is loaded immediately.
+(() => {
+    if (typeof window !== 'undefined' && !document.getElementById('google-gsi-script')) {
+        const script = document.createElement('script');
+        script.id = 'google-gsi-script';
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        document.head.appendChild(script);
+    }
+})();
+// --------------------------------------------------
+
 
 // --- Utility Functions ---
 
@@ -402,31 +413,34 @@ const LoginPage = ({ onLoginSuccess }) => {
     // 🚨 IMPORTANT: You must replace this with your actual Google Client ID 🚨
     const GOOGLE_CLIENT_ID = "51532875137-i88eutsv5c8tnn954i3f5abuupvn28ae.apps.googleusercontent.com"; // Your ID from the console
 
-    // 1. Load Google Identity Services Script (We rely on the global script now)
+    // 1. Initialize Google Identity Services Script
     useEffect(() => {
-        // Ensure the Google Identity script is loaded before initialization
-        if (!window.google) {
-            console.error("Google Identity Services script not loaded yet.");
-            return;
-        }
+        // We ensure the Google script is fully loaded before trying to access window.google
+        const checkGoogleScript = () => {
+            if (window.google && window.google.accounts) {
+                // 2. Initialize the Google Identity Services client
+                window.google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleCredentialResponse, // Function to call after successful authentication
+                });
+                
+                // 3. Render the customized Google Sign-In button
+                window.google.accounts.id.renderButton(
+                    document.getElementById('signInDiv'),
+                    { 
+                        theme: "outline", 
+                        size: "large", 
+                        text: "signin_with",
+                        width: "240"
+                    }  // Customization options
+                );
+            } else {
+                // Wait for the script to load (should be fast since it's injected globally)
+                setTimeout(checkGoogleScript, 100);
+            }
+        };
 
-        // 2. Initialize the Google Identity Services client
-        window.google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: handleCredentialResponse, // Function to call after successful authentication
-            // auto_select: true, 
-        });
-        
-        // 3. Render the customized Google Sign-In button
-        window.google.accounts.id.renderButton(
-            document.getElementById('signInDiv'),
-            { 
-                theme: "outline", 
-                size: "large", 
-                text: "signin_with",
-                width: "240"
-            }  // Customization options
-        );
+        checkGoogleScript();
     }, [GOOGLE_CLIENT_ID]);
 
     // Function executed upon successful Google login (called by the Google script)
@@ -485,13 +499,15 @@ const App = () => {
     };
 
     return (
-        isLoggedIn ? (
-            // User is logged in: Show the E-commerce site
-            <ECommerceSite onLogout={handleLogout} />
-        ) : (
-            // User is NOT logged in: Show the embedded Login Page
-            <LoginPage onLoginSuccess={handleLogin} /> 
-        )
+        <div className="App">
+            {isLoggedIn ? (
+                // User is logged in: Show the E-commerce site
+                <ECommerceSite onLogout={handleLogout} />
+            ) : (
+                // User is NOT logged in: Show the embedded Login Page
+                <LoginPage onLoginSuccess={handleLogin} /> 
+            )}
+        </div>
     );
 };
 
