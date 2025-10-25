@@ -4,6 +4,19 @@ import React, { useState, useEffect, useReducer, useMemo } from 'react';
 // import { GoogleLogin } from '@react-oauth/google';
 // import { jwtDecode } from 'jwt-decode';
 
+// --- Global Script Injection for Tailwind CSS ---
+// This ensures Tailwind is loaded synchronously before the first component renders,
+// fixing the initial styling issue.
+(() => {
+    if (typeof window !== 'undefined' && !document.getElementById('tailwind-script')) {
+        const script = document.createElement('script');
+        script.id = 'tailwind-script';
+        script.src = 'https://cdn.tailwindcss.com';
+        document.head.appendChild(script);
+    }
+})();
+// --------------------------------------------------
+
 // --- Utility Functions ---
 
 // Manual JWT Decoding (Replaces jwtDecode library)
@@ -273,12 +286,7 @@ const ECommerceSite = ({ onLogout }) => {
         [cartState]
     );
 
-    // Load Tailwind CSS script (Crucial for styling)
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.tailwindcss.com';
-        document.head.appendChild(script);
-    }, []);
+    // 🚨 FIX: Removed useEffect here as Tailwind is loaded globally now.
     
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
@@ -394,36 +402,31 @@ const LoginPage = ({ onLoginSuccess }) => {
     // 🚨 IMPORTANT: You must replace this with your actual Google Client ID 🚨
     const GOOGLE_CLIENT_ID = "51532875137-i88eutsv5c8tnn954i3f5abuupvn28ae.apps.googleusercontent.com"; // Your ID from the console
 
-    // 1. Load Google Identity Services Script
+    // 1. Load Google Identity Services Script (We rely on the global script now)
     useEffect(() => {
-        const scriptId = 'google-gsi-script';
-        if (document.getElementById(scriptId)) return;
+        // Ensure the Google Identity script is loaded before initialization
+        if (!window.google) {
+            console.error("Google Identity Services script not loaded yet.");
+            return;
+        }
 
-        const script = document.createElement('script');
-        script.id = scriptId;
-        script.src = 'https://accounts.google.com/gsi/client';
-        script.async = true;
-        document.head.appendChild(script);
-
-        script.onload = () => {
-             // 2. Initialize the Google Identity Services client
-             window.google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleCredentialResponse, // Function to call after successful authentication
-                // auto_select: true, // Uncomment for one-tap auto-login
-            });
-            
-            // 3. Render the customized Google Sign-In button
-            window.google.accounts.id.renderButton(
-                document.getElementById('signInDiv'),
-                { 
-                    theme: "outline", 
-                    size: "large", 
-                    text: "signin_with",
-                    width: "240"
-                }  // Customization options
-            );
-        };
+        // 2. Initialize the Google Identity Services client
+        window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleCredentialResponse, // Function to call after successful authentication
+            // auto_select: true, 
+        });
+        
+        // 3. Render the customized Google Sign-In button
+        window.google.accounts.id.renderButton(
+            document.getElementById('signInDiv'),
+            { 
+                theme: "outline", 
+                size: "large", 
+                text: "signin_with",
+                width: "240"
+            }  // Customization options
+        );
     }, [GOOGLE_CLIENT_ID]);
 
     // Function executed upon successful Google login (called by the Google script)
@@ -444,9 +447,6 @@ const LoginPage = ({ onLoginSuccess }) => {
             onLoginSuccess(); 
         }
     };
-
-    // Note: Since we are using the native Google script, there is no separate onError handler needed here,
-    // as the script handles the initial failure display.
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
