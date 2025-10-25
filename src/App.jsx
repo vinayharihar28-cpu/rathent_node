@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useReducer, useMemo } from 'react';
-import { SpeedInsights } from "@vercel/speed-insights/next";
 // 🚨 FIX: Removed imports for unresolvable packages. 
 // We will now rely on global Google objects loaded via <script>.
 // import { GoogleLogin } from '@react-oauth/google';
