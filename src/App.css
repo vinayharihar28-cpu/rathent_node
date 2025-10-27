@@ -1,4 +1,22 @@
-/* ===== Fullscreen Centered Login ===== */
+/* Reset layout */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Remove old 1280px restriction */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* prevents any horizontal scroll */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== LOGIN PAGE ===== */
 .login-wrapper {
   display: flex;
   justify-content: center;
@@ -16,29 +34,28 @@
   text-align: center;
   width: 100%;
   max-width: 400px;
-  transition: all 0.3s ease;
 }
 
-.login-box:hover {
-  transform: translateY(-3px);
+/* ===== HOME / DASHBOARD ===== */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100vw; /* full width */
+  min-height: 100vh;
+  background: #f9fafb;
+  overflow-x: hidden;
 }
 
-.login-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.5rem;
+.home-content {
+  width: 100%;
+  max-width: 1400px;
+  padding: 2rem;
+  text-align: center;
 }
 
-.login-subtitle {
-  font-size: 1rem;
-  color: #475569;
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .login-box {
-    padding: 2rem;
-    max-width: 90%;
-  }
+/* Optional styling for headings/text */
+h1, h2, h3, p {
+  color: #111827;
 }

@@ -279,57 +279,55 @@ const ECommerceSite = ({ onLogout }) => {
     const [cartState, dispatch] = useReducer(cartReducer, initialCartState);
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            <header className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-indigo-600">Swift Shop 🛍️</h1>
-                <div className="flex gap-3">
-                    <button
-                        onClick={onLogout}
-                        className="px-3 py-1 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
-                    >
-                        Logout
-                    </button>
-                    <button
-                        onClick={() => setIsCartOpen(true)}
-                        className="relative bg-indigo-500 text-white p-3 rounded-full hover:bg-indigo-600"
-                    >
-                        🛒
-                        {cartState.length > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5">
-                                {cartState.reduce(
-                                    (sum, item) => sum + item.quantity,
-                                    0
-                                )}
-                            </span>
-                        )}
-                    </button>
-                </div>
-            </header>
+  <div className="w-screen min-h-screen bg-gray-50 flex flex-col overflow-x-hidden">
+    <header className="bg-white shadow-md py-4 px-6 flex justify-between items-center w-full">
+      <h1 className="text-2xl font-bold text-indigo-600">Swift Shop 🛍️</h1>
+      <div className="flex gap-3">
+        <button
+          onClick={onLogout}
+          className="px-3 py-1 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+        >
+          Logout
+        </button>
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="relative bg-indigo-500 text-white p-3 rounded-full hover:bg-indigo-600"
+        >
+          🛒
+          {cartState.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5">
+              {cartState.reduce((sum, item) => sum + item.quantity, 0)}
+            </span>
+          )}
+        </button>
+      </div>
+    </header>
 
-            <main className="flex-grow max-w-7xl mx-auto p-6">
-                <h2 className="text-3xl font-extrabold text-gray-800 text-center mb-8">
-                    Featured Products
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {PRODUCTS.map((p) => (
-                        <ProductCard key={p.id} product={p} dispatch={dispatch} />
-                    ))}
-                </div>
-            </main>
+    <main className="flex-grow w-full px-6 md:px-12">
+      <h2 className="text-3xl font-extrabold text-gray-800 text-center mb-8">
+        Featured Products
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 place-items-center">
+        {PRODUCTS.map((p) => (
+          <ProductCard key={p.id} product={p} dispatch={dispatch} />
+        ))}
+      </div>
+    </main>
 
-            <ShoppingCart
-                isOpen={isCartOpen}
-                onClose={() => setIsCartOpen(false)}
-                cartState={cartState}
-                dispatch={dispatch}
-                onLogout={onLogout}
-            />
+    <ShoppingCart
+      isOpen={isCartOpen}
+      onClose={() => setIsCartOpen(false)}
+      cartState={cartState}
+      dispatch={dispatch}
+      onLogout={onLogout}
+    />
 
-            <footer className="bg-gray-800 text-white text-center py-4">
-                <p>&copy; 2025 Swift Shop. All rights reserved.</p>
-            </footer>
-        </div>
-    );
+    <footer className="bg-gray-800 text-white text-center py-4 w-full">
+      <p>&copy; 2025 Swift Shop. All rights reserved.</p>
+    </footer>
+  </div>
+);
+
 };
 
 // --- Main App ---
