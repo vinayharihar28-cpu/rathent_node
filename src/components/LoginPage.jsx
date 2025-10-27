@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 
@@ -16,9 +16,9 @@ const LoginPage = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden m-0 p-0">
-      {/* LEFT SIDE: Login */}
-      <div className="flex items-center justify-center w-full md:w-1/2 bg-gradient-to-br from-gray-100 to-gray-200">
+    <div className="flex w-screen h-screen m-0 p-0 overflow-hidden bg-white">
+      {/* LEFT SIDE */}
+      <div className="flex items-center justify-center w-full md:w-1/2 bg-gradient-to-br from-gray-100 to-gray-300">
         <div className="bg-white shadow-2xl rounded-2xl p-10 w-80 text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-6">
             Welcome to Swift Shop
@@ -31,11 +31,11 @@ const LoginPage = ({ onLoginSuccess }) => {
         </div>
       </div>
 
-      {/* RIGHT SIDE: FULL IMAGE */}
+      {/* RIGHT SIDE IMAGE */}
       <div className="hidden md:block w-1/2 h-full">
         <img
-          src="/login-side.png"  // <-- put your image in /public folder
-          alt="Login Visual"
+          src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1000&q=80"
+          alt="Shop Visual"
           className="w-full h-full object-cover"
         />
       </div>
