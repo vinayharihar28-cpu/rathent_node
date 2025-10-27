@@ -59,3 +59,12 @@
 h1, h2, h3, p {
   color: #111827;
 }
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+

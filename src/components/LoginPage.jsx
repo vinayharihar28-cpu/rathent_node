@@ -39,9 +39,10 @@ const LoginPage = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden m-0 p-0">
+      
       {/* LEFT SIDE - LOGIN CARD */}
-      <div className="flex flex-col justify-center items-center w-full md:w-1/2 bg-gradient-to-br from-gray-100 to-gray-300">
+      <div className="flex justify-center items-center w-full md:w-1/2 bg-gradient-to-br from-gray-100 to-gray-200">
         <div className="bg-white shadow-2xl rounded-2xl p-10 w-80 text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-6">Welcome to Swift Shop</h1>
           <p className="text-gray-600 mb-6">Sign in with Google to continue</p>
@@ -50,10 +51,10 @@ const LoginPage = ({ onLoginSuccess }) => {
       </div>
 
       {/* RIGHT SIDE - FULL IMAGE */}
-      <div className="hidden md:flex w-1/2">
+      <div className="hidden md:flex w-1/2 h-full">
         <img
-          src="src=/login-side.png"  // <-- Replace with your uploaded image name
-          alt="Login Background"
+          src="/login-side.png"  // <-- replace with your image name in /public folder
+          alt="Shop Illustration"
           className="w-full h-full object-cover"
         />
       </div>
