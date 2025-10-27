@@ -245,7 +245,7 @@ export default function LoginPage({ onLoginSuccess }) {
       {/* Left Side */}
       <div className="w-full md:w-2/5 flex items-center justify-center bg-gray-50 p-8 h-full">
         <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md text-center">
-          <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Swift Shop</h1>
+          <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Rathent</h1>
           <p className="text-gray-600 mb-6">
             {mode === "createUser"
               ? "Join us today! Create your Swift Shop account."
