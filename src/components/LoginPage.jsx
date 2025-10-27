@@ -40,12 +40,13 @@ const LoginPage = ({ onLoginSuccess }) => {
 
   return (
   <div className="flex items-center justify-center min-h-screen w-full bg-gradient-to-br from-gray-100 to-gray-300 overflow-hidden">
-    <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md text-center">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Welcome to Swift Shop</h1>
-      <p className="text-gray-600 mb-6">Sign in with Google to continue</p>
-      <div id="signInDiv" className="flex justify-center"></div>
-    </div>
+  <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md text-center">
+    <h1 className="text-3xl font-bold text-gray-800 mb-6">Welcome to Swift Shop</h1>
+    <p className="text-gray-600 mb-6">Sign in with Google to continue</p>
+    <div id="signInDiv" className="flex justify-center"></div>
   </div>
+</div>
+
 );
 
 
