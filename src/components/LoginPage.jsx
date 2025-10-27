@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from "react";
-import loginImage from "../assets/login-side.png"; // ✅ Make sure this image exists
-import { signInWithEmailAndPassword, sendPasswordResetEmail, createUserWithEmailAndPassword } from "firebase/auth";
-
+import React, { useState } from "react";
+import loginImage from "../assets/login-side.png";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "../firebase"; // Import your firebase auth instance
 
 // --- Helper to decode Google JWT ---
 const decodeJWT = (token) => {
@@ -21,85 +27,47 @@ const decodeJWT = (token) => {
   }
 };
 
-const GOOGLE_CLIENT_ID =
-  "51532875137-i88eutsv5c8tnn954i3f5abuupvn28ae.apps.googleusercontent.com";
-
-// --- Main Component ---
-export default function LoginPage({ onLoginSuccess, auth }) {
+export default function LoginPage({ onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [mode, setMode] = useState("login"); // 'login' | 'forgotPassword' | 'createUser'
+  const [mode, setMode] = useState("login"); // login | forgotPassword | createUser
   const [isPasswordResetSent, setIsPasswordResetSent] = useState(false);
   const [isAccountCreated, setIsAccountCreated] = useState(false);
 
-  // --- Google Sign-In Setup ---
-  const handleCredentialResponse = (response) => {
-    const decoded = decodeJWT(response.credential);
-    console.log("Google User Logged In:", decoded);
-    onLoginSuccess(decoded.name || "User");
+  // ✅ Google Sign-In Setup
+  const provider = new GoogleAuthProvider();
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("Google Login Success:", user);
+      onLoginSuccess(user.displayName || user.email);
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      setError("Google login failed. Please try again.");
+    }
   };
 
-  useEffect(() => {
-    if (!document.getElementById("google-client-script")) {
-      const script = document.createElement("script");
-      script.src = "https://accounts.google.com/gsi/client";
-      script.async = true;
-      script.defer = true;
-      script.id = "google-client-script";
-      document.head.appendChild(script);
-    }
-
-    const checkGoogle = () => {
-      if (window.google && window.google.accounts) {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: handleCredentialResponse,
-        });
-        window.google.accounts.id.renderButton(
-          document.getElementById("signInDiv"),
-          {
-            theme: "filled_blue",
-            size: "large",
-            width: "250",
-            shape: "pill",
-          }
-        );
-      } else {
-        setTimeout(checkGoogle, 300);
-      }
-    };
-    checkGoogle();
-  }, []);
-
-  // --- Manual Login ---
+  // ✅ Manual Login
   const handleManualLogin = async (e) => {
-  e.preventDefault();
-  setError(null);
-  try {
-    if (!auth) {
-      setError("Authentication not ready. Please wait...");
-      return;
+    e.preventDefault();
+    setError(null);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      onLoginSuccess(userCredential.user.displayName || userCredential.user.email);
+    } catch (err) {
+      console.error("Manual login failed:", err);
+      setError("Invalid credentials or Firebase Auth not enabled.");
     }
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    onLoginSuccess(userCredential.user.displayName || userCredential.user.email);
-  } catch (err) {
-    console.error("Manual login failed:", err);
-    setError("Invalid credentials or Firebase Auth not enabled.");
-  }
-};
+  };
 
-
-  // --- Forgot Password ---
+  // ✅ Forgot Password
   const handlePasswordReset = async (e) => {
     e.preventDefault();
     setError(null);
     try {
-      const { sendPasswordResetEmail } = await import("firebase/auth");
-      if (!auth) {
-        setError("Authentication not ready. Please wait...");
-        return;
-      }
       await sendPasswordResetEmail(auth, email);
       setIsPasswordResetSent(true);
       setPassword("");
@@ -108,22 +76,13 @@ export default function LoginPage({ onLoginSuccess, auth }) {
     }
   };
 
-  // --- Create User (Sign Up) ---
+  // ✅ Create Account
   const handleCreateAccount = async (e) => {
     e.preventDefault();
     setError(null);
     setIsAccountCreated(false);
     try {
-      const { createUserWithEmailAndPassword } = await import("firebase/auth");
-      if (!auth) {
-        setError("Authentication not ready. Please wait...");
-        return;
-      }
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       setIsAccountCreated(true);
       setPassword("");
       console.log("New User Created:", userCredential.user);
@@ -133,7 +92,7 @@ export default function LoginPage({ onLoginSuccess, auth }) {
     }
   };
 
-  // --- UI Forms ---
+  // ✅ Forms
   const renderLoginForm = () => (
     <form onSubmit={handleManualLogin} className="space-y-4">
       <input
@@ -192,9 +151,7 @@ export default function LoginPage({ onLoginSuccess, auth }) {
 
   const renderForgotPasswordForm = () => (
     <form onSubmit={handlePasswordReset} className="space-y-4">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Reset Password
-      </h2>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Reset Password</h2>
       {isPasswordResetSent ? (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-sm">
           Password reset link sent to <b>{email}</b>. Check your inbox.
@@ -238,9 +195,7 @@ export default function LoginPage({ onLoginSuccess, auth }) {
 
   const renderCreateUserForm = () => (
     <form onSubmit={handleCreateAccount} className="space-y-4">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Create Account
-      </h2>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Create Account</h2>
       {isAccountCreated && (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-sm">
           Account created successfully! You can now sign in.
@@ -284,52 +239,60 @@ export default function LoginPage({ onLoginSuccess, auth }) {
     </form>
   );
 
-  // --- Main Layout ---
+  // ✅ Layout
   return (
-  <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden font-sans">
-    {/* Left Side */}
-    <div className="w-full md:w-2/5 flex items-center justify-center bg-gray-50 p-8 h-full">
-      <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md text-center">
-        <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">
-          Swift Shop
-        </h1>
-        <p className="text-gray-600 mb-6">
-          {mode === "createUser"
-            ? "Join us today! Create your Swift Shop account."
+    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden font-sans">
+      {/* Left Side */}
+      <div className="w-full md:w-2/5 flex items-center justify-center bg-gray-50 p-8 h-full">
+        <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md text-center">
+          <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Swift Shop</h1>
+          <p className="text-gray-600 mb-6">
+            {mode === "createUser"
+              ? "Join us today! Create your Swift Shop account."
+              : mode === "forgotPassword"
+              ? "Reset your password quickly."
+              : "Welcome back! Sign in below."}
+          </p>
+
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+              {error}
+            </div>
+          )}
+
+          {mode === "login"
+            ? renderLoginForm()
             : mode === "forgotPassword"
-            ? "Reset your password quickly."
-            : "Welcome back! Sign in below."}
-        </p>
+            ? renderForgotPasswordForm()
+            : renderCreateUserForm()}
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
-            {error}
-          </div>
-        )}
+          {mode === "login" && (
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={handleGoogleLogin}
+                className="flex items-center space-x-2 bg-white border border-gray-300 px-5 py-2 rounded-lg shadow hover:bg-gray-100 transition"
+              >
+                <img
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                  alt="Google logo"
+                  className="w-5 h-5"
+                />
+                <span className="text-gray-700 font-medium">Sign in with Google</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
 
-        {mode === "login"
-          ? renderLoginForm()
-          : mode === "forgotPassword"
-          ? renderForgotPasswordForm()
-          : renderCreateUserForm()}
-
-        {mode === "login" && (
-          <div id="signInDiv" className="flex justify-center mt-6"></div>
-        )}
+      {/* Right Side */}
+      <div className="hidden md:block w-full md:w-3/5 relative h-screen">
+        <img
+          src={loginImage}
+          alt="Shop Background"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
       </div>
     </div>
-
-    {/* Right Side */}
-    <div className="hidden md:block w-full md:w-3/5 relative h-screen">
-      <img
-        src={loginImage}
-        alt="Shop Background"
-        className="w-full h-full object-cover object-center"
-      />
-      <div className="absolute inset-0 bg-black bg-opacity-30"></div>
-    </div>
-  </div>
-);
-
-
+  );
 }
