@@ -52,7 +52,7 @@ const LoginPage = ({ onLoginSuccess }) => {
       {/* RIGHT SIDE - FULL IMAGE */}
       <div className="hidden md:flex w-1/2">
         <img
-          src="D:\BCA Sem 3\Dynamic Web\my-google-login-app\src\assets\Gemini_Generated_Image_8rdo798rdo798rdo.png"  // <-- Replace with your uploaded image name
+          src="src=/login-side.png"  // <-- Replace with your uploaded image name
           alt="Login Background"
           className="w-full h-full object-cover"
         />
