@@ -288,48 +288,50 @@ export default function LoginPage({ onLoginSuccess, auth }) {
 
   // --- Main Layout ---
   return (
-    <div className="flex flex-col md:flex-row min-h-screen font-sans">
-      {/* Left Side */}
-      <div className="w-full md:w-2/5 flex items-center justify-center bg-gray-50 p-8">
-        <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md text-center">
-          <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">
-            Swift Shop
-          </h1>
-          <p className="text-gray-600 mb-6">
-            {mode === "createUser"
-              ? "Join us today! Create your Swift Shop account."
-              : mode === "forgotPassword"
-              ? "Reset your password quickly."
-              : "Welcome back! Sign in below."}
-          </p>
-
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
-              {error}
-            </div>
-          )}
-
-          {mode === "login"
-            ? renderLoginForm()
+  <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden font-sans">
+    {/* Left Side */}
+    <div className="w-full md:w-2/5 flex items-center justify-center bg-gray-50 p-8 h-full">
+      <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md text-center">
+        <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">
+          Swift Shop
+        </h1>
+        <p className="text-gray-600 mb-6">
+          {mode === "createUser"
+            ? "Join us today! Create your Swift Shop account."
             : mode === "forgotPassword"
-            ? renderForgotPasswordForm()
-            : renderCreateUserForm()}
+            ? "Reset your password quickly."
+            : "Welcome back! Sign in below."}
+        </p>
 
-          {mode === "login" && (
-            <div id="signInDiv" className="flex justify-center mt-6"></div>
-          )}
-        </div>
-      </div>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
 
-      {/* Right Side */}
-      <div className="hidden md:block w-full md:w-3/5 relative">
-        <img
-          src={loginImage}
-          alt="Shop Background"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+        {mode === "login"
+          ? renderLoginForm()
+          : mode === "forgotPassword"
+          ? renderForgotPasswordForm()
+          : renderCreateUserForm()}
+
+        {mode === "login" && (
+          <div id="signInDiv" className="flex justify-center mt-6"></div>
+        )}
       </div>
     </div>
-  );
+
+    {/* Right Side */}
+    <div className="hidden md:block w-full md:w-3/5 relative h-screen">
+      <img
+        src={loginImage}
+        alt="Shop Background"
+        className="w-full h-full object-cover object-center"
+      />
+      <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+    </div>
+  </div>
+);
+
+
 }
