@@ -1,49 +1,44 @@
-/* ===== Login Page Centering ===== */
+/* ===== Fullscreen Centered Login ===== */
 .login-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   background: linear-gradient(135deg, #f8fafc, #e0e7ff);
-  padding: 16px;
 }
 
-.login-container {
-  background: #fff;
-  border-radius: 16px;
-  padding: 40px;
+.login-box {
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
   width: 100%;
   max-width: 400px;
-  text-align: center;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
-.login-container:hover {
+.login-box:hover {
   transform: translateY(-3px);
 }
 
 .login-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 10px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
 }
 
 .login-subtitle {
+  font-size: 1rem;
   color: #475569;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
-.login-button {
-  margin-top: 20px;
-}
-
-/* ===== Responsive ===== */
 @media (max-width: 768px) {
-  .login-container {
-    padding: 24px;
+  .login-box {
+    padding: 2rem;
     max-width: 90%;
   }
 }
