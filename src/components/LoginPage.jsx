@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import loginImage from "../assets/login-side.png"; // ✅ Make sure this image exists
+import { signInWithEmailAndPassword, sendPasswordResetEmail, createUserWithEmailAndPassword } from "firebase/auth";
+
 
 // --- Helper to decode Google JWT ---
 const decodeJWT = (token) => {
@@ -72,25 +74,21 @@ export default function LoginPage({ onLoginSuccess, auth }) {
 
   // --- Manual Login ---
   const handleManualLogin = async (e) => {
-    e.preventDefault();
-    setError(null);
-    try {
-      const { signInWithEmailAndPassword } = await import("firebase/auth");
-      if (!auth) {
-        setError("Authentication not ready. Please wait...");
-        return;
-      }
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      onLoginSuccess(userCredential.user.displayName || userCredential.user.email);
-    } catch (err) {
-      console.error("Manual login failed:", err);
-      setError("Invalid credentials or Firebase Auth not enabled.");
+  e.preventDefault();
+  setError(null);
+  try {
+    if (!auth) {
+      setError("Authentication not ready. Please wait...");
+      return;
     }
-  };
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    onLoginSuccess(userCredential.user.displayName || userCredential.user.email);
+  } catch (err) {
+    console.error("Manual login failed:", err);
+    setError("Invalid credentials or Firebase Auth not enabled.");
+  }
+};
+
 
   // --- Forgot Password ---
   const handlePasswordReset = async (e) => {
