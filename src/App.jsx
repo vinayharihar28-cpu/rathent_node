@@ -190,7 +190,7 @@ const ECommerceSite = ({ onLogout }) => {
   return (
     <div className="w-screen min-h-screen bg-gray-50 flex flex-col overflow-x-hidden">
       <header className="bg-white shadow-md py-4 px-6 flex justify-between items-center w-full">
-        <h1 className="text-2xl font-bold text-indigo-600">Rathent 🛍️</h1>
+        <h1 className="text-2xl font-bold text-indigo-600">Rathent</h1>
         <div className="flex gap-3">
           <button
             onClick={onLogout}
