@@ -39,16 +39,17 @@ export default function LoginPage({ onLoginSuccess }) {
   const provider = new GoogleAuthProvider();
 
   const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      console.log("Google Login Success:", user);
-      onLoginSuccess(user.displayName || user.email);
-    } catch (error) {
-      console.error("Google Login Error:", error);
-      setError("Google login failed. Please try again.");
-    }
-  };
+  try {
+    const result = await signInWithPopup(auth, provider);
+    console.log("User:", result.user);
+    localStorage.setItem('userSession', JSON.stringify(result.user));
+    onLoginSuccess();
+  } catch (error) {
+    console.error("Google login failed:", error);
+    alert("Google login failed. Please try again.");
+  }
+};
+
 
   // ✅ Manual Login
   const handleManualLogin = async (e) => {
